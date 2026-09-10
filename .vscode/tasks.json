@@ -1,0 +1,8 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "编译实验核心（不执行）", "type": "process", "command": "${workspaceFolder}/.venv/Scripts/python.exe", "args": ["scripts/build_native.py"], "group": {"kind": "build", "isDefault": true}, "problemMatcher": []},
+    {"label": "静态检查（不执行应用）", "type": "process", "command": "${workspaceFolder}/.venv/Scripts/python.exe", "args": ["scripts/static_check.py"], "problemMatcher": []},
+    {"label": "准备自定义模型（不推理）", "type": "process", "command": "${workspaceFolder}/.venv/Scripts/python.exe", "args": ["scripts/download_model.py"], "problemMatcher": []}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "打开短语识别界面（不自动录音或播报）",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "phrase_lab",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/app"},
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

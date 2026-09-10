@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": ["${workspaceFolder}/app"],
+  "files.exclude": {"**/__pycache__": true},
+  "search.exclude": {".venv": true, ".cache": true, "models/custom": true, "native/generated": true, "课程资料": true}
+}

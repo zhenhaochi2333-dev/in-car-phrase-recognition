@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+build/
+native/generated/
+models/custom/*
+!models/custom/.gitkeep
+data/*
+!data/.gitkeep
+exports/
+.cache/
