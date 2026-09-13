@@ -63,7 +63,8 @@ def main():
               "- 麦克风、声卡设备查询与采集。", "- TTS 合成、扬声器播放及声音通知。",
               "- 正确率、混淆矩阵、延迟、抗噪及回声互锁的功能验证。", "",
               "本记录不能用作功能或性能验收结论。下载后的哈希记录用于本地完整性检查，不是独立的上游签名验证。", ""]
-    (ROOT / "docs/04-静态检查记录.md").write_text("\n".join(lines), encoding="utf-8")
+    with (ROOT / "docs/04-静态检查记录.md").open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write("\n".join(lines))
     print(f"Static checks passed: {len(sources)} Python sources, {len(configs)} configs, model/build provenance.")
     print("Application, inference, audio devices and TTS were NOT executed.")
 

@@ -208,6 +208,12 @@ class WorkspaceLayout:
         self.mode.setCurrentIndex(0 if self.settings.mode == "experiment" else 1)
         self.mode.currentIndexChanged.connect(self.mode_changed)
         control_layout.addWidget(self.mode)
+        self.mode_hint = label(
+            "实验模式固定统计 12 类；straight 等其他词会显示为未知。",
+            "subtle", True,
+        )
+        self.mode_hint.setToolTip("自定义短语是扩展功能，应与课程规定的 12 类测试结果分开记录。")
+        control_layout.addWidget(self.mode_hint)
         control_layout.addWidget(label("输入设备", "fieldLabel"))
         device_row = QHBoxLayout()
         device_row.setSpacing(8)
@@ -227,6 +233,11 @@ class WorkspaceLayout:
         self.refresh_devices_button.setAccessibleName("刷新输入设备")
         device_row.addWidget(self.refresh_devices_button)
         control_layout.addLayout(device_row)
+        self.device_hint = label(
+            "系统默认输入未必是人声麦克风；识别不到声音时请刷新并选择真实麦克风。",
+            "subtle", True,
+        )
+        control_layout.addWidget(self.device_hint)
         control_layout.addSpacing(1)
         actions = QHBoxLayout()
         actions.setSpacing(8)

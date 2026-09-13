@@ -239,6 +239,36 @@ class InteractionTests(unittest.TestCase):
         self.assertEqual(self.window.recognizer.settings.custom_threshold, 0.45)
         self.assertEqual(self.window.recognizer.settings.mode, "experiment")
 
+    def test_mode_and_input_hints_explain_course_scope(self):
+        self.window.navigate(0)
+        self.window.mode.setCurrentIndex(self.window.mode.findData("experiment"))
+        self.app.processEvents()
+        self.assertIn("固定统计", self.window.mode_hint.text())
+        self.assertIn("straight", self.window.mode_hint.text())
+        self.window.mode.setCurrentIndex(self.window.mode.findData("custom"))
+        self.app.processEvents()
+        self.assertIn("扩展功能", self.window.mode_hint.text())
+        self.assertIn("系统默认", self.window.device_hint.text())
+        self.window.device.addItem("Stereo Mix #99", 99)
+        self.window.device.setCurrentIndex(self.window.device.findData(99))
+        self.app.processEvents()
+        self.assertIn("虚拟或混音", self.window.device_hint.text())
+
+    def test_quiet_input_updates_idle_card_without_history_or_speech(self):
+        worker = self.listen()
+        self.window.autospeak.setChecked(True)
+        worker.state.emit("静音 / 等待短语")
+        self.assertIn("静音", self.window.result_text.text())
+        self.assertEqual(len(self.window.history), 0)
+        self.assertIsNone(self.window.speaker)
+        worker.state.emit("检测到声音")
+        self.assertIn("正在识别", self.window.result_text.text())
+        self.window.autospeak.setChecked(False)
+        worker.event.emit(RecognitionEvent("command", "yes", "BC-ResNet / 实验"))
+        worker.state.emit("静音 / 等待短语")
+        self.assertEqual(self.window.result_text.text(), "yes")
+        self.assertEqual(len(self.window.history), 1)
+
     def test_import_export_search_and_saved_phrases_while_stopped(self):
         self.window.navigate(1)
         buttons = {b.text(): b for b in self.window.phrase_editor.findChildren(QPushButton)}

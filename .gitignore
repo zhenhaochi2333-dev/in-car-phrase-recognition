@@ -9,3 +9,8 @@ data/*
 !data/.gitkeep
 exports/
 .cache/
+
+# Keep local recordings and incoming review archives off GitHub.
+*.wav
+*.m4a
+/_review_*.zip

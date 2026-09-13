@@ -105,6 +105,7 @@ class MainWindow(WorkspaceLayout, QMainWindow):
         self.update_model_status()
         self.update_controls()
         self.mode_changed()
+        self.device_changed()
         if self.settings_problem:
             self.tell(self.settings_problem, True)
         else:
@@ -269,11 +270,32 @@ class MainWindow(WorkspaceLayout, QMainWindow):
         if hasattr(self, "message"):
             custom = self.mode.currentData() == "custom"
             set_badge(self.mode_badge, "自定义短语" if custom else "实验口令", "blue")
+            if hasattr(self, "mode_hint"):
+                self.mode_hint.setText(
+                    "自定义短语是扩展功能；请单独记录它的测试结果，不纳入课程 12 类统计。"
+                    if custom else
+                    "实验模式固定统计 12 类；straight 等其他词会显示为未知。"
+                )
             self.update_library_note()
             if not self._initializing:
                 self.save_from_ui()
 
     def device_changed(self):
+        if hasattr(self, "device_hint"):
+            if self.device.currentData() == -1:
+                self.device_hint.setText(
+                    "正在使用系统默认输入；请确认它是真实麦克风，而不是立体声混音。"
+                )
+            elif any(token in self.device.currentText().casefold()
+                     for token in ("stereo mix", "立体声混音", "loopback", "回环", "what u hear", "虚拟")):
+                self.device_hint.setText(
+                    f"已选择：{self.device.currentText()}。这看起来像虚拟或混音输入；"
+                    "建议刷新后选择真实麦克风。"
+                )
+            else:
+                self.device_hint.setText(
+                    f"已选择：{self.device.currentText()}。开始监听后才会打开该设备。"
+                )
         if not self._initializing:
             self.save_from_ui()
 
@@ -342,6 +364,19 @@ class MainWindow(WorkspaceLayout, QMainWindow):
     @Slot(str)
     def on_worker_state(self, text):
         self.state_text.setText(text)
+        # Input activity is a status, not a recognised command. Keep history
+        # and the last actual recognition intact when subsequent silence arrives.
+        if not self.history and self.recognizer is not None and not self.recognizer.cancelled.is_set():
+            if text == "静音 / 等待短语":
+                self.result_text.setText("静音 · 等待你说话")
+                self.result_hint.setText("当前输入电平较低。静音无需说出 silence，也不会自动播报。")
+                self.result_engine.setText("输入状态")
+                self.result_score.setText("—")
+                self.result_time.setText("—")
+            elif text in ("正在监听", "检测到声音"):
+                self.result_text.setText("正在听，请说口令" if text == "正在监听" else "检测到声音 · 正在识别")
+                self.result_hint.setText("识别成功后会在这里显示文字。")
+                self.result_engine.setText("等待识别")
         if text == "正在监听":
             self.input_connected = True
             if self.message.text().startswith("正在加载模型"):
